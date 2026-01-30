@@ -9,14 +9,14 @@ CREATE TABLE IF NOT EXISTS products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Inventory table with optimistic locking
+-- Inventory table with optimistic locking and cascade delete
 CREATE TABLE IF NOT EXISTS inventory (
     product_id VARCHAR(8) PRIMARY KEY,
     total_stock INT NOT NULL DEFAULT 0,
     available_stock INT NOT NULL DEFAULT 0,
     version BIGINT NOT NULL DEFAULT 0,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    CONSTRAINT fk_inventory_product_id FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- Reservations table
@@ -33,20 +33,11 @@ CREATE TABLE IF NOT EXISTS reservations (
     INDEX idx_expires_at (expires_at)
 );
 
--- Orders table
+-- Orders table with product reference and cascade delete
 CREATE TABLE IF NOT EXISTS orders (
     id VARCHAR(8) PRIMARY KEY,
-    status ENUM('CREATED', 'CONFIRMED', 'CANCELLED') NOT NULL DEFAULT 'CREATED',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    product_id VARCHAR(8) NOT NULL,
+    quantity INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_orders_product_id FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
-
--- Insert sample data
-INSERT IGNORE INTO products (id, name) VALUES 
-('12345678', 'Sample Product 1'),
-('87654321', 'Sample Product 2'),
-('11111111', 'Sample Product 3');
-
-INSERT IGNORE INTO inventory (product_id, total_stock, available_stock) VALUES 
-('12345678', 100, 100),
-('87654321', 50, 50),
-('11111111', 200, 200);
