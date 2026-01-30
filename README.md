@@ -5,7 +5,7 @@
 The system implements a reservation-based inventory management approach with automatic expiry handling:
 
 - **Product Creation**: System generates unique 8-character UUID IDs for all products
-- **Stock Reservation**: Temporary reservations with 1-minute expiry to prevent stock blocking
+- **Stock Reservation**: Temporary reservations with 10-minute expiry to prevent stock blocking
 - **Order Confirmation**: Converts valid reservations to confirmed orders
 - **Automatic Cleanup**: Expired reservations release stock back to available inventory
 - **Concurrency Control**: Optimistic locking prevents race conditions during stock updates
