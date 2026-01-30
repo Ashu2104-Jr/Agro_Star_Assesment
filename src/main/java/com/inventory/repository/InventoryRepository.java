@@ -2,6 +2,7 @@ package com.inventory.repository;
 
 import com.inventory.entity.*;
 import com.inventory.dto.ReservationStatus;
+import com.inventory.dto.OrderStatus;
 import com.inventory.exception.InternalServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -150,6 +151,7 @@ public class InventoryRepository {
                 .id(orderId)
                 .productId(productId)
                 .quantity(quantity)
+                .status(OrderStatus.CONFIRMED)
                 .build();
             final Order savedOrder = saveOrder(order);
             return savedOrder.getId();

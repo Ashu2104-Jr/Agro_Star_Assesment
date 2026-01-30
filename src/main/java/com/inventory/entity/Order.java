@@ -25,6 +25,10 @@ public class Order {
     @Column(nullable = false)
     private Integer quantity;
     
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
@@ -32,6 +36,9 @@ public class Order {
     protected void onCreate() {
         if (id == null) {
             id = UUID.randomUUID().toString().split("-")[0];
+        }
+        if (status == null) {
+            status = OrderStatus.CREATED;
         }
         createdAt = LocalDateTime.now();
     }
