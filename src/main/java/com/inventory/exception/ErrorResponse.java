@@ -1,4 +1,4 @@
-package com.inventory.dto;
+package com.inventory.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

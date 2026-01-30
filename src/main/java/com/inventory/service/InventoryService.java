@@ -84,7 +84,7 @@ public class InventoryService {
             repository.saveInventory(inventory);
             
             final String orderId = UUID.randomUUID().toString().split("-")[0];
-            final LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(1);
+            final LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(10);
             
             final Reservation savedReservation = repository.insertReservation(orderId, input.productId(), input.quantity(), expiresAt);
             

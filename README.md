@@ -57,6 +57,24 @@ GET /products/stock/{productId}
 ```
 Response: `{"productId": "a1b2c3d4", "name": "Sample Product", "availableStock": 90}`
 
+### Error Responses
+
+All errors return a consistent format:
+```json
+{
+  "id": null,
+  "message": "Error description",
+  "errorCode": 400,
+  "retryable": false
+}
+```
+
+**Error Codes:**
+- `400`: Bad Request (Invalid input, insufficient stock)
+- `404`: Not Found (Product/reservation not found)
+- `409`: Conflict (Concurrent modification)
+- `500`: Internal Server Error
+
 ## DB Schema
 
 ### Tables
@@ -100,7 +118,7 @@ Response: `{"productId": "a1b2c3d4", "name": "Sample Product", "availableStock":
 
 1. **Product IDs**: Always system-generated, never user-provided
 2. **Reservation Expiry**: Fixed 10-minute timeout for all reservations
-3. **Stock Updates**: Can be positive (add) or negative (reduce) increments
+3. **Stock Updates**: Only positive values allowed to add stock to existing inventory
 4. **Order Creation**: Only happens when reservation is confirmed
 5. **Cleanup Timing**: Expired reservations cleaned before each stock operation
 6. **Concurrency**: Optimistic locking sufficient for expected load

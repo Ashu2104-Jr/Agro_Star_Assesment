@@ -1,6 +1,5 @@
 package com.inventory.exception;
 
-import com.inventory.dto.ErrorResponse;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
