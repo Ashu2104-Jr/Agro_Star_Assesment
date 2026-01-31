@@ -120,6 +120,7 @@ public class InventoryService {
         return new OrderOutput(input.orderId(), "CONFIRMED");
     }
     
+    @Transactional
     public StockOutput getAvailableStock(final String productId) {
         if (productId == null) {
             throw new InvalidRequestException("Product ID is required");
@@ -139,12 +140,8 @@ public class InventoryService {
     @Transactional
     public void cleanupExpiredReservations() {
         final LocalDateTime now = LocalDateTime.now();
-        final var expiredReservations = repository.findExpiredReservations(now);
         
-        for (final Reservation reservation : expiredReservations) {
-            reservation.setStatus(ReservationStatus.EXPIRED);
-            repository.save(reservation);
-            repository.releaseStock(reservation.getProductId(), reservation.getQuantity());
-        }
+        repository.bulkReleaseExpiredStock(now);
+        repository.bulkExpireReservations(now);
     }
 }

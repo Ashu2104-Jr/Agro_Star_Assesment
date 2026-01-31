@@ -130,6 +130,31 @@ public class InventoryRepository {
         }
     }
     
+    public int bulkExpireReservations(final LocalDateTime now) {
+        try {
+            return entityManager.createQuery("UPDATE Reservation r SET r.status = :expiredStatus WHERE r.status = :reservedStatus AND r.expiresAt < :now")
+                .setParameter("expiredStatus", ReservationStatus.EXPIRED)
+                .setParameter("reservedStatus", ReservationStatus.RESERVED)
+                .setParameter("now", now)
+                .executeUpdate();
+        } catch (final Exception e) {
+            throw new InternalServerException("Failed to expire reservations: " + e.getMessage());
+        }
+    }
+    
+    public int bulkReleaseExpiredStock(final LocalDateTime now) {
+        try {
+            return entityManager.createNativeQuery(
+                "UPDATE inventory i SET i.available_stock = i.available_stock + " +
+                "(SELECT IFNULL(SUM(r.quantity), 0) FROM reservations r " +
+                "WHERE r.product_id = i.product_id AND r.status = 'RESERVED' AND r.expires_at < ?)")
+                .setParameter(1, now)
+                .executeUpdate();
+        } catch (final Exception e) {
+            throw new InternalServerException("Failed to release expired stock: " + e.getMessage());
+        }
+    }
+    
     public Reservation insertReservation(final String orderId, final String productId, final Integer quantity, final LocalDateTime expiresAt) {
         try {
             final Reservation reservation = Reservation.builder()
